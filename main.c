@@ -644,7 +644,7 @@ void exec_command(char **argv, size_t commandCount)
 
 int main(int argc, char **argv) 
 {
-	char *prompt = "$ ";
+	char *prompt = "($) ";
 	char *line_ptr = NULL, *line_cpy = NULL, *token = NULL;
 	const char *delim = " \t\n";
 	size_t line_size = 0, n_chars_read = 0, num_tokens = 0, i = 0, commandCount = 0;
