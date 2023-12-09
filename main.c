@@ -516,6 +516,7 @@ char *get_command_path(char *command, size_t commandCount, int* code) {
 	char *path = _strtok(paths, ":"); // split the paths string into tokens bcs the dirs are seperated by :
 	char *abs_path;
 	*code = 0;
+	(void) commandCount;
 	// the code is 0 for null and 1 for abs path and 2 for relative path
 
 	if (paths == NULL || path == NULL || command == NULL)
@@ -636,6 +637,47 @@ void exec_command(char **argv, size_t commandCount)
 	}
 }
 /**
+ * read_non_interactive - reads line from input stream
+ * @line: buffer that will read in
+ * Return: pointer to filled buffer
+ */
+char * read_non_interactive(void)
+{
+	ssize_t n_chars;
+	char ch;
+	int index = 0;
+	char *line;
+
+
+	printf("in function");
+	line = malloc (sizeof(char) * 1024);
+	printf("before while");
+	while ((n_chars = read(STDIN_FILENO, &ch, 1)) > 0)
+	{
+		if (ch == EOF || ch == '\n')
+		{
+			break;
+		/*	exit(EXIT_SUCCESS);*/
+		}
+/*		if (ch == '\n'*/
+		printf("%c",ch);
+		line[index] = ch;
+		index++;
+	}
+	if (n_chars == -1)
+	{
+		perror("read failed");
+		free(line);
+		exit(EXIT_FAILURE);
+	}
+	line[index] ='\0';
+	printf("%s",line);
+
+	return line;
+}
+
+
+/**
  * main - the main function
  * @argc: the number of arguments
  * @argv: pointer to an array of pointers to strings containing the arguments
@@ -647,19 +689,25 @@ int main(int argc, char **argv)
 	char *prompt = "($) ";
 	char *line_ptr = NULL, *line_cpy = NULL, *token = NULL;
 	const char *delim = " \t\n";
-	size_t line_size = 0, n_chars_read = 0, num_tokens = 0, i = 0, commandCount = 0;
+	size_t line_size = 0, num_tokens = 0, i = 0, commandCount = 0;
+	ssize_t n_chars_read = 0;
 
 	(void)argc;
 	while (1)
 	{
-		_puts(prompt);
-
+		if(isatty(STDIN_FILENO))
+		{
+			_puts(prompt);
+			fflush(stdout);
+		}
 		n_chars_read = 	_getline(&line_ptr, &line_size, stdin);
 		if (n_chars_read == -1) 
 		{
-			perror("getline");
-			return (-1);
+				/*perror("getline");*/
+			free(line_ptr);
+			return (EXIT_SUCCESS);
 		}
+			
 
 		line_cpy = _strdup(line_ptr);
 		if (line_cpy == NULL)
