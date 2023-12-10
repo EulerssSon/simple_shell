@@ -1,4 +1,5 @@
 #include "main.h"
+#include <stdio.h>
 #include <stdlib.h>
 /**
  * _getline - reads an entire line from a file descriptor
@@ -66,9 +67,7 @@ void print_env(void)
 /**
  * get_command_path - gets the path of a command
  * @command: pointer to the string containing the command
- * @commandCount: the number of the command
  * @code: pointer to the integer containing the code
- *
  * Return: pointer to the string containing the path of the command
  */
 char *get_command_path(char *command, int *code)
@@ -105,15 +104,26 @@ char *get_command_path(char *command, int *code)
 		path = strtok(NULL, ":");
 	}
 	free_str_dup_set_null(&paths);
+	/* check if command is a path */
+	if (access(command, X_OK | F_OK) == 0)
+	{
+		*code = 2;
+		return (command);
+	}
+	/* check if command is a path */
 	return (NULL);
 }
 /**
  * print_err_num - prints the error message
  * @num: pointer to the string containing the number of the command
  * @command: pointer to the string containing the command
+ * Return: 127 on error
  */
 int print_err_num(char **num, char *command)
 {
+	pid_t pid;
+	int status;
+
 	write(STDERR_FILENO, "./hsh: ", 7);
 	write(STDERR_FILENO, *num, _strlen(*num));
 	write(STDERR_FILENO, ": ", 2);
@@ -121,77 +131,48 @@ int print_err_num(char **num, char *command)
 	write(STDERR_FILENO, ": not found\n", 12);
 	free(*num);
 	*num = NULL;
-	return (127);
+	pid = fork();
+	if (pid == -1)
+	{
+		perror("Error");
+		return (1);
+	}
+	if (pid == 0)
+	{
+		exit(127);
+	}
+	else
+	{
+		waitpid(pid, &status, 0);
+		if (WIFEXITED(status))
+			return (127);
+		return (127);
+
+	}
 }
 
 /**
  * exec_command - executes a command
  * @argv: pointer to an array of pointers to strings containing the arguments
  * @commandCount: the number of the command
+ * Return: 1 on success, 0 on failure or 127 on error
  */
 int exec_command(char **argv, size_t commandCount)
 {
-	/* pid_t pid; */
-	/* int status = 0, code = 0; */
-	/* char *command_path, *num; */
-
-	/* command_path = get_command_path(argv[0], &code); */
-
-	/* if (command_path == NULL) */
-	/* { */
-	/* 	if (argv[0][0] == ' ') */
-	/* 		return (0); */
-	/* 	num = num_to_string(commandCount); */
-	/* 	print_err_num(&num, argv[0]);*//*print error message and will free**/
-	/* 	execve(argv[0], argv, environ); */
-	/* 	return(127); */
-	/* } */
-	/* pid = fork(); */
-
-	/* if (pid == -1) */
-	/* { */
-	/* 	perror("Error"); */
-	/* 	return (1); */
-	/* } */
-	/* if (pid == 0) */
-	/* { */
-	/* 	if (execve(command_path, argv, environ) == -1) */
-	/* 	{ */
-	/* 		if (code == 1 && command_path != NULL) */
-	/* 			free_str_dup_set_null(&command_path); */
-	/* 		perror("Error"); */
-	/* 		exit(1); */
-	/* 	} */
-	/* 	if (code == 1) */
-	/* 		free_str_dup_set_null(&command_path); */
-	/* } */
-	/* else */
-	/* { */
-	/* 	waitpid(pid, &status, 0); */
-	/* 	return (0); */
-
-	/* } */
-	/* return (1); */
 	pid_t pid;
-	int status;
+	int status, code;
 	char *command_path, *num;
-	int code;
 
+	/*****************************************************************************
 	if (access(argv[0], X_OK | F_OK) == 0)
 	{
 		pid = fork();
 		if (pid == -1)
-		{
-			perror("Error");
 			return (1);
-		}
 		if (pid == 0)
 		{
 			if (execve(argv[0], argv, environ) == -1)
-			{
-				perror("Error");
 				exit(1);
-			}
 		}
 		else
 		{
@@ -199,22 +180,16 @@ int exec_command(char **argv, size_t commandCount)
 			return (0);
 		}
 	}
-	else if (command_path = get_command_path(argv[0], &code), command_path != NULL)// comma operator 
-																				   // evaluate the left operand and then the right operand
+	command_path = get_command_path(argv[0], &code);
+	if (command_path != NULL)
 	{
 		pid = fork();
 		if (pid == -1)
-		{
-			perror("Error");
 			return (1);
-		}
 		if (pid == 0)
 		{
 			if (execve(command_path, argv, environ) == -1)
-			{
-				perror("Error");
 				exit(1);
-			}
 		}
 		else
 		{
@@ -225,19 +200,46 @@ int exec_command(char **argv, size_t commandCount)
 	}
 	else
 	{
-		// in case of  there is not executable file
-		// print error message
 		if (argv[0] == NULL || argv[0][0] == ' ')
 			return (0);
 		num = num_to_string(commandCount);
-		int x = print_err_num(&num, argv[0]);
-		/* execve(argv[0], argv, environ); */
-
-		return(x);
+		print_err_num(&num, argv[0]);
+		if (execve(argv[0], argv, environ) == -1)
+			exit(127);
 	}
-	return (1);
+	return (0);
+	*****************************************************************************/
+	command_path = get_command_path(argv[0], &code);
+	if (command_path != NULL)
+	{
+		pid = fork();
+		if (pid == -1)
+			return (1);
+		if (pid == 0)
+		{
+			if (execve(command_path, argv, environ) == -1)
+				exit(1);
+		}
+		else
+		{
+			waitpid(pid, &status, 0);
+			if (code == 1)
+				free_str_dup_set_null(&command_path);
+			return (0);
+		}
+	}
+	else
+	{
+		if (argv[0] == NULL || argv[0][0] == ' ')
+			return (0);
+		if (code == 0 && argv[0][0] != '/')
+		{
+			num = num_to_string(commandCount);
+			print_err_num(&num, argv[0]);
+		}
+			if (execve(argv[0], argv, environ) == -1)
+				exit(127);
+	}
+	return (0);
 }
-
-
-
 
