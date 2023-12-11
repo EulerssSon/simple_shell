@@ -19,7 +19,7 @@ void aloc_argv(char ***argv, size_t n, char **token, const char *d, char **lc)
 		perror("malloc ");
 		exit(EXIT_FAILURE);
 	}
-	*token = _strtok(*lc, d);
+	*token = strtok(*lc, d);
 	for (i = 0; *token != NULL; i++)
 	{
 		(*argv)[i] = _strdup(*token);
@@ -34,7 +34,7 @@ void aloc_argv(char ***argv, size_t n, char **token, const char *d, char **lc)
 			free(*argv);
 			*argv = NULL;
 		}
-		*token = _strtok(NULL, d);
+		*token = strtok(NULL, d);
 	}
 	(*argv)[i] = NULL;
 }
