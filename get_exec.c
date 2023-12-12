@@ -162,7 +162,6 @@ int exec_command(char **argv, size_t commandCount)
 	pid_t pid;
 	int status, code;
 	char *command_path, *num;
-	int (*builtin)();
 
 	/*****************************************************************************
 	if (access(argv[0], X_OK | F_OK) == 0)
@@ -210,10 +209,6 @@ int exec_command(char **argv, size_t commandCount)
 	}
 	return (0);
 	*****************************************************************************/
-	/* check builtin*/
-	builtin = check_builtin(argv[0]);
-	if (builtin)
-		builtin();
 	command_path = get_command_path(argv[0], &code);
 	if (command_path != NULL)
 	{

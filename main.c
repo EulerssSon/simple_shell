@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 	char *line_ptr = NULL, *line_cpy = NULL, *token = NULL;
 	const char *delim = " \t\n";
 	size_t line_size = 0, num_tokens = 0, commandCount = 0;
-	int n_chars_read = 0;
+	int n_chars_read = 0, exit_code = -18;
 
 	(void)argc;
 	while (1)
@@ -37,11 +37,16 @@ int main(int argc, char **argv)
 		}
 		aloc_argv(&argv, num_tokens, &token, delim, &line_cpy);
 		commandCount++;
-		exec_command(argv, commandCount);
-		printf("return from exit");
+		exit_code = exit_shell_code(argv);
+		if (exit_code == -18)
+		{
+			exec_command(argv, commandCount);
+		}
 		free_argv_set_to_NULL(&argv);
 		free_str_dup_set_null(&line_cpy);
 		free_str_dup_set_null(&line_ptr);
+		if (exit_code != -18)
+			exit(exit_code);
 	}
 	if (line_ptr != NULL)
 		free(line_ptr);
