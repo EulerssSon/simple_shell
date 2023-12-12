@@ -60,7 +60,10 @@ int main(int argc, char **argv)
 		}
 		n_chars_read = _getline(&line_ptr, &line_size, stdin);
 		if (n_chars_read == -1)
+		{
+			free_str_dup_set_null(&line_ptr);
 			return (EXIT_SUCCESS);
+		}
 		line_cpy = _strdup(line_ptr);
 		if (line_cpy == NULL)
 			return (-1);
