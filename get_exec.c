@@ -2,69 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 /**
- * _getline - reads an entire line from a file descriptor
- * @lineptr: pointer to the buffer containing the line
- * @n: pointer to the variable containing the size of the buffer
- * @stream: pointer to the file descriptor
- * Return: the number of characters read, -1 if an error occurred
- */
-
-int _getline(char **lineptr, size_t *n, FILE *stream)
-{
-	char *bufferPtr = NULL;
-	char *positionChar = NULL;
-	size_t sizeLine = 0;
-	int character;
-
-	if (lineptr == NULL || n == NULL || stream == NULL)
-		return (-1);
-	bufferPtr = *lineptr;
-	sizeLine = *n;
-	character = fgetc(stream);
-	if (character == EOF)
-		return (-1);
-	if (bufferPtr == NULL)
-	{
-		bufferPtr = malloc(sizeof(char) * 1024);
-		if (bufferPtr == NULL)
-			return (-1);
-		sizeLine = 1024;
-	}
-	positionChar = bufferPtr;
-	while (character != EOF)
-	{
-		if ((size_t)(positionChar - bufferPtr) >= (sizeLine - 1))
-		{
-			sizeLine += 1024;
-			bufferPtr = _realloc(bufferPtr, *n, sizeLine);
-			if (bufferPtr == NULL)
-				return (-1);
-			positionChar = bufferPtr + sizeLine - 1024;
-		}
-		*positionChar++ = character;
-		if (character == '\n')
-			break;
-		character = fgetc(stream);
-	}
-	*positionChar++ = '\0';
-	*lineptr = bufferPtr;
-	*n = sizeLine;
-	return (positionChar - bufferPtr - 1);
-}
-/**
- * print_env - prints the environment
- */
-void print_env(void)
-{
-	int i = 0;
-
-	for (i = 0; environ[i] != NULL; i++)
-	{
-		_puts(environ[i]);
-		_putchar('\n');
-	}
-}
-/**
  * get_command_path - gets the path of a command
  * @command: pointer to the string containing the command
  * @code: pointer to the integer containing the code
@@ -113,6 +50,52 @@ char *get_command_path(char *command, int *code)
 	/* check if command is a path */
 	return (NULL);
 }
+
+/**
+ * exec_command - executes a command
+ * @argv: pointer to an array of pointers to strings containing the arguments
+ * @commandCount: the number of the command
+ * Return: 1 on success, 0 on failure or 127 on error
+ */
+int exec_command(char **argv, size_t commandCount)
+{
+	pid_t pid;
+	int status, code;
+	char *command_path, *num;
+
+	command_path = get_command_path(argv[0], &code);
+	if (command_path != NULL)
+	{
+		pid = fork();
+		if (pid == -1)
+			return (1);
+		if (pid == 0)
+		{
+			if (execve(command_path, argv, environ) == -1)
+				exit(1);
+		}
+		else
+		{
+			waitpid(pid, &status, 0);
+			if (code == 1)
+				free_str_dup_set_null(&command_path);
+			return (0);
+		}
+	}
+	else
+	{
+		if (argv[0] == NULL || argv[0][0] == ' ')
+			return (0);
+		if (code == 0 && argv[0][0] != '/')
+		{
+			num = num_to_string(commandCount);
+			print_err_num(&num, argv[0]);
+		}
+			if (execve(argv[0], argv, environ) == -1)
+				exit(127);
+	}
+	return (0);
+}
 /**
  * print_err_num - prints the error message
  * @num: pointer to the string containing the number of the command
@@ -150,96 +133,17 @@ int print_err_num(char **num, char *command)
 
 	}
 }
-
 /**
- * exec_command - executes a command
- * @argv: pointer to an array of pointers to strings containing the arguments
- * @commandCount: the number of the command
- * Return: 1 on success, 0 on failure or 127 on error
+ * print_env - prints the environment
  */
-int exec_command(char **argv, size_t commandCount)
+void print_env(void)
 {
-	pid_t pid;
-	int status, code;
-	char *command_path, *num;
+	int i = 0;
 
-	/*****************************************************************************
-	if (access(argv[0], X_OK | F_OK) == 0)
+	for (i = 0; environ[i] != NULL; i++)
 	{
-		pid = fork();
-		if (pid == -1)
-			return (1);
-		if (pid == 0)
-		{
-			if (execve(argv[0], argv, environ) == -1)
-				exit(1);
-		}
-		else
-		{
-			waitpid(pid, &status, 0);
-			return (0);
-		}
+		_puts(environ[i]);
+		_putchar('\n');
 	}
-	command_path = get_command_path(argv[0], &code);
-	if (command_path != NULL)
-	{
-		pid = fork();
-		if (pid == -1)
-			return (1);
-		if (pid == 0)
-		{
-			if (execve(command_path, argv, environ) == -1)
-				exit(1);
-		}
-		else
-		{
-			waitpid(pid, &status, 0);
-			free_str_dup_set_null(&command_path);
-			return (0);
-		}
-	}
-	else
-	{
-		if (argv[0] == NULL || argv[0][0] == ' ')
-			return (0);
-		num = num_to_string(commandCount);
-		print_err_num(&num, argv[0]);
-		if (execve(argv[0], argv, environ) == -1)
-			exit(127);
-	}
-	return (0);
-	*****************************************************************************/
-	command_path = get_command_path(argv[0], &code);
-	if (command_path != NULL)
-	{
-		pid = fork();
-		if (pid == -1)
-			return (1);
-		if (pid == 0)
-		{
-			if (execve(command_path, argv, environ) == -1)
-				exit(1);
-		}
-		else
-		{
-			waitpid(pid, &status, 0);
-			if (code == 1)
-				free_str_dup_set_null(&command_path);
-			return (0);
-		}
-	}
-	else
-	{
-		if (argv[0] == NULL || argv[0][0] == ' ')
-			return (0);
-		if (code == 0 && argv[0][0] != '/')
-		{
-			num = num_to_string(commandCount);
-			print_err_num(&num, argv[0]);
-		}
-			if (execve(argv[0], argv, environ) == -1)
-				exit(127);
-	}
-	return (0);
 }
 

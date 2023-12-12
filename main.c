@@ -4,7 +4,6 @@
  * main - entry point
  * @argc: number of arguments
  * @argv: array of arguments
- *
  * Return: 0 on success, -1 on failure
  */
 int main(int argc, char **argv)
@@ -14,8 +13,8 @@ int main(int argc, char **argv)
 	const char *delim = " \t\n";
 	size_t line_size = 0, num_tokens = 0, commandCount = 0;
 	int n_chars_read = 0, exit_code = -18;
-
 	(void)argc;
+
 	while (1)
 	{
 		if (isatty(STDIN_FILENO))

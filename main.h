@@ -13,17 +13,6 @@
 #include <sys/stat.h>
 #include <string.h>
 
-
-
-/*built-in struct*/
-
-typedef struct builtin
-{
-	char *name;
-	int (*b_fn)();
-
-}my_builtin;
-
 /*extern variables*/
 extern char **environ;
 
@@ -52,5 +41,7 @@ int exec_command(char **argv, size_t commandCount);
 void free_argv_set_to_NULL(char ***argv);
 void aloc_argv(char ***argv, size_t n, char **token, const char *d, char **lc);
 void free_str_dup_set_null(char **str);
+int exit_shell_code(char **argv);
+int to_int(const char *string);
 #endif /*MAIN_H*/
 
