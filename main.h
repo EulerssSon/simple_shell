@@ -13,6 +13,17 @@
 #include <sys/stat.h>
 #include <string.h>
 
+
+
+/*built-in struct*/
+
+typedef struct builtin
+{
+	char *name;
+	int (*b_fn)();
+
+}my_builtin;
+
 /*extern variables*/
 extern char **environ;
 

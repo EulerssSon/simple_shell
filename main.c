@@ -38,6 +38,7 @@ int main(int argc, char **argv)
 		aloc_argv(&argv, num_tokens, &token, delim, &line_cpy);
 		commandCount++;
 		exec_command(argv, commandCount);
+		printf("return from exit");
 		free_argv_set_to_NULL(&argv);
 		free_str_dup_set_null(&line_cpy);
 		free_str_dup_set_null(&line_ptr);
