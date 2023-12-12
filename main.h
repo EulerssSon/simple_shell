@@ -35,13 +35,11 @@ int isDelim(char c, const char *delim);
 char *_strtok(char *str, const char *delim);
 void *_realloc(void *old_ptr, size_t old_size, size_t new_size);
 int _getline(char **lineptr, size_t *n, FILE *stream);
-void print_env(void);
+int print_env(void);
 char *get_command_path(char *command, int *code);
 int exec_command(char **argv, size_t commandCount);
 void free_argv_set_to_NULL(char ***argv);
 void aloc_argv(char ***argv, size_t n, char **token, const char *d, char **lc);
 void free_str_dup_set_null(char **str);
-int exit_shell_code(char **argv);
-int to_int(const char *string);
 #endif /*MAIN_H*/
 
