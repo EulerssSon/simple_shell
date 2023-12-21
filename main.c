@@ -21,12 +21,11 @@ int main (int argc, char **argv)
 /*		printf("outside if %ld  len %ld string %s\n", nchars,strlen(line), line);*/
 		if (nchars == -1)
 		{
-			free(line);
-			free_2d(&argv);	
 			exit(EXIT_SUCCESS);
 		}
 		if(line[0] == '\n' && nchars == 1)
 		{
+			printf("in newline \n");
 			free(line);
 			continue;
 		}
@@ -37,11 +36,12 @@ int main (int argc, char **argv)
 			free_2d(&argv);
 			exit(EXIT_SUCCESS);
 		}
+		free(line);
 	/*	for (i = 0; argv[i] != NULL; i++)*/
 	/*		printf("args%s\n", argv[i]);*/
 		exc_cmd(argv);
+		free_2d(&argv);
 			
 	}
-	free(line);
 	return (0);
 }
