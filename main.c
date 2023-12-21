@@ -1,6 +1,7 @@
 #include "main.h"
 
 
+
 int main (int argc, char **argv)
 {
 /*	int i;*/
@@ -17,10 +18,11 @@ int main (int argc, char **argv)
 			fflush(stdout);
 		}
 		nchars = getline(&line, &n, stdin);
+/*		printf("outside if %ld  len %ld string %s\n", nchars,strlen(line), line);*/
 		if (nchars == -1)
 		{
-		/*	printf("line %d\n",_strlen(line));*/
 			free(line);
+			free_2d(&argv);	
 			exit(EXIT_SUCCESS);
 		}
 		if(line[0] == '\n' && nchars == 1)
@@ -39,10 +41,7 @@ int main (int argc, char **argv)
 	/*		printf("args%s\n", argv[i]);*/
 		exc_cmd(argv);
 			
-
 	}
 	free(line);
-	free_2d(&argv);
-
 	return (0);
 }
