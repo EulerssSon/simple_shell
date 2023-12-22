@@ -12,7 +12,7 @@
 #define max_buf_size 64;
 void exc_cmd(char **args);
 /*char *get_loc(char *cmd);*/
-char **tokenize(char *line);
+void tokenize(char *line, char ***args);
 char *_strcpy(char *dest, char *src);
 int _strlen(char *s);
 void free_2d(char ***args);
