@@ -33,7 +33,7 @@ int main (int argc, char **argv)
 		if (argv[0] == NULL)
 		{
 	/*		free(line);*/
-			free_2d(&argv);
+/*			free_2d(&argv);*/
 			exit(EXIT_SUCCESS);
 		}
 		free(line);
