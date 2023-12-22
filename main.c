@@ -32,6 +32,7 @@ int main (int argc, char **argv)
 		argv = tokenize(line);
 		if (argv[0] == NULL)
 		{
+			free(line);
 			free_2d(&argv);
 			exit(EXIT_SUCCESS);
 		}
