@@ -61,7 +61,7 @@ int _strlen(char *s)
 
 char **tokenize(char *line)
 {
- 	char **args,  *line_copy = NULL, *token;
+ 	char **args, *line_copy = NULL, *token;
 	int token_num = 0, i;
 	char * delim = " \n";
 
@@ -69,8 +69,8 @@ char **tokenize(char *line)
 
 	if(line_copy == NULL)
 	{
-		perror("Malloc error");
 		free(line);
+		perror("Malloc error");
 		exit(EXIT_FAILURE);
 	}
 	_strcpy(line_copy, line);
@@ -84,9 +84,9 @@ char **tokenize(char *line)
 	args = malloc (sizeof(char *) * (token_num + 1));
 	if (args == NULL)
 	{
-		perror("Malloc error1");
 		free(line_copy);
 		free(line);
+		perror("Malloc error1");
 		exit(EXIT_FAILURE);
 	}
 	token = strtok(line_copy, delim);

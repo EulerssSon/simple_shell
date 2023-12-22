@@ -38,9 +38,15 @@ int main (int argc, char **argv)
 			free_2d(&argv);
 			exit(EXIT_SUCCESS);
 		}
-        /*	free(line);*/
+		if (line != NULL)
+		{
+			free(line);
+		}
 		exc_cmd(argv);
-/*		free_2d(&argv);*/
+		if (argv != NULL)
+		{
+			free_2d(&argv);
+		}
 			
 	}
 	return (0);
