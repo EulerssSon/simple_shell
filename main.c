@@ -21,6 +21,7 @@ int main (int argc, char **argv)
 /*		printf("outside if %ld  len %ld string %s\n", nchars,strlen(line), line);*/
 		if (nchars == -1)
 		{
+			free(line);
 			exit(EXIT_SUCCESS);
 		}
 		if(line[0] == '\n' && nchars == 1)
@@ -37,8 +38,6 @@ int main (int argc, char **argv)
 			exit(EXIT_SUCCESS);
 		}
 		free(line);
-	/*	for (i = 0; argv[i] != NULL; i++)*/
-	/*		printf("args%s\n", argv[i]);*/
 		exc_cmd(argv);
 		free_2d(&argv);
 			
