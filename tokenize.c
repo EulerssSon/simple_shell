@@ -70,6 +70,7 @@ char **tokenize(char *line)
 	if(line_copy == NULL)
 	{
 		perror("Malloc error");
+		free(line);
 		exit(EXIT_FAILURE);
 	}
 	_strcpy(line_copy, line);
@@ -85,6 +86,7 @@ char **tokenize(char *line)
 	{
 		perror("Malloc error1");
 		free(line_copy);
+		free(line);
 		exit(EXIT_FAILURE);
 	}
 	token = strtok(line_copy, delim);
@@ -95,6 +97,7 @@ char **tokenize(char *line)
 		{
 			perror("Malloc error2");
 			free(line_copy);
+			free(line);
 			while (--i >= 0)
 			{
 				free(args[i]);
