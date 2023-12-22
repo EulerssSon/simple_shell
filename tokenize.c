@@ -59,9 +59,9 @@ int _strlen(char *s)
 }/**
  */
 
-void tokenize(char *line, char ***args)
+char **tokenize(char *line)
 {
-	char  *line_copy = NULL, *token;
+ 	char **args,  *line_copy = NULL, *token;
 	int token_num = 0, i;
 	char * delim = " \n";
 
@@ -80,8 +80,8 @@ void tokenize(char *line, char ***args)
 		token = strtok(NULL, delim);
 	}
 	token_num++;
-	*args = malloc (sizeof(char *) * (token_num + 1));
-	if (*args == NULL)
+	args = malloc (sizeof(char *) * (token_num + 1));
+	if (args == NULL)
 	{
 		perror("Malloc error1");
 		free(line_copy);
@@ -90,21 +90,22 @@ void tokenize(char *line, char ***args)
 	token = strtok(line_copy, delim);
 	for (i = 0; token != NULL; i++)
 	{
-		(*args)[i] = malloc(sizeof(char) * (_strlen(token) + 1));
-		if ((*args)[i] == NULL)
+		args[i] = malloc(sizeof(char) * (_strlen(token) + 1));
+		if (args[i] == NULL)
 		{
 			perror("Malloc error2");
 			free(line_copy);
 			while (--i >= 0)
 			{
-				free((*args)[i]);
+				free(args[i]);
 			}
-			free(*args);
+			free(args);
 			exit(EXIT_FAILURE);
 		}
-		_strcpy((*args)[i], token);
+		_strcpy(args[i], token);
 		token = strtok(NULL, delim);
 	}
-	(*args)[i] = NULL;
+	args[i] = NULL;
 	free(line_copy);
+	return (args);
 }

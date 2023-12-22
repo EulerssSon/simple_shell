@@ -29,7 +29,7 @@ int main (int argc, char **argv)
 			free(line);
 			continue;
 		}
-		tokenize(line, &argv);
+		argv = tokenize(line);
 		if (argv[0] == NULL)
 		{
 			free(line);
