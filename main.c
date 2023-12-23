@@ -21,13 +21,12 @@ int main (int argc, char **argv)
 /*		printf("outside if %ld  len %ld string %s\n", nchars,strlen(line), line);*/
 		if (nchars == -1)
 		{
-			free(line);
-			free_2d(&argv);
+	/*		free(line);*/
+	/*		free_2d(&argv);*/
 			exit(EXIT_SUCCESS);
 		}
 		if(line[0] == '\n' && nchars == 1)
 		{
-			printf("in newline \n");
 			free(line);
 			continue;
 		}

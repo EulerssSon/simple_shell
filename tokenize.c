@@ -81,7 +81,7 @@ char **tokenize(char *line)
 		token = strtok(NULL, delim);
 	}
 	token_num++;
-	args = malloc (sizeof(char *) * (token_num + 1));
+	args = malloc (sizeof(char *) * (token_num));
 	if (args == NULL)
 	{
 		free(line_copy);
