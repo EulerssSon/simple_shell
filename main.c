@@ -22,7 +22,6 @@ int main (int argc, char **argv)
 		if (nchars == -1)
 		{
 			free(line);
-	 		free_2d(&argv);
 			exit(EXIT_SUCCESS);
 		}
 		if(line[0] == '\n' && nchars == 1)
@@ -38,7 +37,7 @@ int main (int argc, char **argv)
 			exit(EXIT_SUCCESS);
 		}
 		exc_cmd(argv);
-			
+ 		free_2d(&argv);
 	}
 	return (0);
 }
